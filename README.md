@@ -12,6 +12,17 @@
 
 ## 快速開始
 
+```bash
+# 1. 下載部署腳本
+curl -sSL https://raw.githubusercontent.com/shared-utils/github-runner-ko/main/deploy.sh -o deploy.sh
+chmod +x deploy.sh
+
+# 2. 執行部署（需先建立 GitHub App）
+./deploy.sh
+```
+
+## 詳細步驟
+
 ### 1. 建立 GitHub App
 
 前往：**GitHub → Settings → Developer settings → GitHub Apps → New GitHub App**
@@ -38,18 +49,23 @@
 
 ### 2. 部署到 Kubernetes
 
-下載 Private Key 檔案後，執行：
+下載 Private Key 檔案到當前目錄，然後執行部署腳本：
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/shared-utils/github-runner-ko/main/deploy.sh | bash
+# 下載部署腳本
+curl -sSL https://raw.githubusercontent.com/shared-utils/github-runner-ko/main/deploy.sh -o deploy.sh
+chmod +x deploy.sh
+
+# 執行部署（交互式）
+./deploy.sh
 ```
 
-腳本會交互式詢問：
+腳本會詢問：
 - GitHub Organization/Username
 - App ID
 - Installation ID
-- Private Key 路徑（自動偵測當前目錄的 .pem 檔案）
-- Runner 數量配置（可選，預設最小 1，最大 10）
+- Private Key 路徑（自動偵測 .pem 檔案）
+- Runner 數量（預設 1-10）
 
 ### 3. 在 Workflow 中使用
 
