@@ -126,6 +126,7 @@ helm upgrade --install ko-runners \
   --set-file githubConfigSecret.github_app_private_key="${PRIVATE_KEY_PATH}" \
   --set minRunners=${MIN_RUNNERS} \
   --set maxRunners=${MAX_RUNNERS} \
+  --set runnerScaleSetName=ko \
   --set template.spec.serviceAccountName=runner-sa \
   --set template.spec.containers[0].name=runner \
   --set template.spec.containers[0].image="ghcr.io/shared-utils/github-runner-ko:${IMAGE_VERSION}" \
@@ -139,7 +140,7 @@ echo "📊 查看 Runner 狀態："
 echo "  kubectl get pods -n arc-system"
 echo ""
 echo "📊 查看 Runner ScaleSet："
-echo "  kubectl get runnerscaleset -n arc-system"
+echo "  kubectl get autoscalingrunnersets -n arc-system"
 echo ""
 echo "🎯 在 GitHub Workflow 中使用："
-echo "  runs-on: [self-hosted, ko-runners]"
+echo "  runs-on: [self-hosted, ko]"

@@ -44,7 +44,7 @@ chmod +x deploy.sh
 ```yaml
 jobs:
   build:
-    runs-on: [self-hosted, ko-runners]
+    runs-on: [self-hosted, ko]
     steps:
       - uses: actions/checkout@v4
       - run: ko publish ./cmd/app
@@ -66,5 +66,3 @@ docker pull ghcr.io/shared-utils/github-runner-ko:latest
 查看版本：https://github.com/shared-utils/github-runner-ko/pkgs/container/github-runner-ko
 
 ## License
-
-MIT
