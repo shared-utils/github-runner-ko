@@ -13,21 +13,21 @@ find_pem_file() {
 }
 
 # 1. GitHub Organization/User
-read -p "📌 GitHub Organization 或 Username: " GITHUB_ORG
+read -p "📌 GitHub Organization 或 Username: " GITHUB_ORG < /dev/tty
 if [ -z "$GITHUB_ORG" ]; then
   echo "❌ 錯誤：GitHub Organization 不能為空"
   exit 1
 fi
 
 # 2. App ID
-read -p "📌 GitHub App ID: " APP_ID
+read -p "📌 GitHub App ID: " APP_ID < /dev/tty
 if [ -z "$APP_ID" ]; then
   echo "❌ 錯誤：App ID 不能為空"
   exit 1
 fi
 
 # 3. Installation ID
-read -p "📌 GitHub App Installation ID: " INSTALLATION_ID
+read -p "📌 GitHub App Installation ID: " INSTALLATION_ID < /dev/tty
 if [ -z "$INSTALLATION_ID" ]; then
   echo "❌ 錯誤：Installation ID 不能為空"
   exit 1
@@ -36,10 +36,10 @@ fi
 # 4. Private Key 路徑
 DEFAULT_PEM=$(find_pem_file)
 if [ -n "$DEFAULT_PEM" ]; then
-  read -p "📌 Private Key 路徑 [${DEFAULT_PEM}]: " PRIVATE_KEY_PATH
+  read -p "📌 Private Key 路徑 [${DEFAULT_PEM}]: " PRIVATE_KEY_PATH < /dev/tty
   PRIVATE_KEY_PATH=${PRIVATE_KEY_PATH:-$DEFAULT_PEM}
 else
-  read -p "📌 Private Key 路徑: " PRIVATE_KEY_PATH
+  read -p "📌 Private Key 路徑: " PRIVATE_KEY_PATH < /dev/tty
 fi
 
 if [ -z "$PRIVATE_KEY_PATH" ]; then
@@ -53,13 +53,13 @@ if [ ! -f "$PRIVATE_KEY_PATH" ]; then
 fi
 
 # 5. Runner 配置
-read -p "📌 最小 Runner 數量 [1]: " MIN_RUNNERS
+read -p "📌 最小 Runner 數量 [1]: " MIN_RUNNERS < /dev/tty
 MIN_RUNNERS=${MIN_RUNNERS:-1}
 
-read -p "📌 最大 Runner 數量 [10]: " MAX_RUNNERS
+read -p "📌 最大 Runner 數量 [10]: " MAX_RUNNERS < /dev/tty
 MAX_RUNNERS=${MAX_RUNNERS:-10}
 
-read -p "📌 Runner 鏡像版本 [0.0.2]: " IMAGE_VERSION
+read -p "📌 Runner 鏡像版本 [0.0.2]: " IMAGE_VERSION < /dev/tty
 IMAGE_VERSION=${IMAGE_VERSION:-0.0.2}
 
 echo ""
@@ -73,7 +73,7 @@ echo "  Max Runners:      $MAX_RUNNERS"
 echo "  Image Version:    $IMAGE_VERSION"
 echo ""
 
-read -p "確認部署？(y/N): " CONFIRM
+read -p "確認部署？(y/N): " CONFIRM < /dev/tty
 if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
   echo "❌ 取消部署"
   exit 0
