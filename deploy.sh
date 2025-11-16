@@ -89,42 +89,12 @@ helm upgrade --install arc-controller \
 echo ""
 echo "⏳ 等待 Controller 就緒..."
 kubectl wait --for=condition=available --timeout=300s \
-  deployment/arc-controller-gha-runner-scale-set-controller \
-  -n arc-system || echo "⚠️  等待超時，但繼續嘗試部署..."
-
-sleep 5
+  deployment/arc-controller-gha-rs-controller \
+  -n arc-system
 
 echo ""
-echo "🔑 建立 Secret..."
-kubectl create secret generic arc-controller-secret \
-  -n arc-system \
-  --from-literal=github_app_id=$APP_ID \
-  --from-literal=github_app_installation_id=$INSTALLATION_ID \
-  --from-file=github_app_private_key=$PRIVATE_KEY_PATH \
-  --dry-run=client -o yaml | kubectl apply -f -
-
-echo ""
-echo "🚀 部署 Runner ScaleSet..."
+echo "🔑 建立 ServiceAccount 和權限..."
 kubectl apply -f - <<EOF
-apiVersion: actions.github.com/v1alpha1
-kind: RunnerScaleSet
-metadata:
-  name: ko-runners
-  namespace: arc-system
-spec:
-  githubConfigUrl: https://github.com/${GITHUB_ORG}
-  githubConfigSecret: arc-controller-secret
-  minRunners: ${MIN_RUNNERS}
-  maxRunners: ${MAX_RUNNERS}
-  
-  template:
-    metadata:
-      labels:
-        runner: ko
-    spec:
-      serviceAccountName: runner-sa
-      image: ghcr.io/shared-utils/github-runner-ko:${IMAGE_VERSION}
----
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -144,6 +114,23 @@ subjects:
     name: runner-sa
     namespace: arc-system
 EOF
+
+echo ""
+echo "🚀 部署 Runner ScaleSet..."
+helm upgrade --install ko-runners \
+  --namespace arc-system \
+  --create-namespace \
+  --set githubConfigUrl="https://github.com/${GITHUB_ORG}" \
+  --set githubConfigSecret.github_app_id="${APP_ID}" \
+  --set githubConfigSecret.github_app_installation_id="${INSTALLATION_ID}" \
+  --set-file githubConfigSecret.github_app_private_key="${PRIVATE_KEY_PATH}" \
+  --set minRunners=${MIN_RUNNERS} \
+  --set maxRunners=${MAX_RUNNERS} \
+  --set template.spec.serviceAccountName=runner-sa \
+  --set template.spec.containers[0].name=runner \
+  --set template.spec.containers[0].image="ghcr.io/shared-utils/github-runner-ko:${IMAGE_VERSION}" \
+  --set template.spec.containers[0].imagePullPolicy=Always \
+  oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
 
 echo ""
 echo "✅ 部署完成！"
