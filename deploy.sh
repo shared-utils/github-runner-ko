@@ -2,6 +2,9 @@
 
 set -e
 
+# 重定向標準輸入到終端，支援 curl | bash 執行方式
+exec < /dev/tty
+
 echo "🚀 GitHub Actions Runner Controller (ARC) 部署工具"
 echo "================================================"
 echo ""
