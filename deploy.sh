@@ -87,6 +87,14 @@ helm upgrade --install arc-controller \
   oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
 
 echo ""
+echo "⏳ 等待 Controller 就緒..."
+kubectl wait --for=condition=available --timeout=300s \
+  deployment/arc-controller-gha-runner-scale-set-controller \
+  -n arc-system || echo "⚠️  等待超時，但繼續嘗試部署..."
+
+sleep 5
+
+echo ""
 echo "🔑 建立 Secret..."
 kubectl create secret generic arc-controller-secret \
   -n arc-system \
@@ -110,6 +118,9 @@ spec:
   maxRunners: ${MAX_RUNNERS}
   
   template:
+    metadata:
+      labels:
+        runner: ko
     spec:
       serviceAccountName: runner-sa
       image: ghcr.io/shared-utils/github-runner-ko:${IMAGE_VERSION}
