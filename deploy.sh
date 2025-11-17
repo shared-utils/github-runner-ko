@@ -59,9 +59,6 @@ MIN_RUNNERS=${MIN_RUNNERS:-1}
 read -p "📌 最大 Runner 數量 [10]: " MAX_RUNNERS
 MAX_RUNNERS=${MAX_RUNNERS:-10}
 
-read -p "📌 Runner 鏡像版本 [0.0.2]: " IMAGE_VERSION
-IMAGE_VERSION=${IMAGE_VERSION:-0.0.2}
-
 echo ""
 echo "📋 部署配置摘要："
 echo "  GitHub Org:       $GITHUB_ORG"
@@ -70,7 +67,6 @@ echo "  Installation ID:  $INSTALLATION_ID"
 echo "  Private Key:      $PRIVATE_KEY_PATH"
 echo "  Min Runners:      $MIN_RUNNERS"
 echo "  Max Runners:      $MAX_RUNNERS"
-echo "  Image Version:    $IMAGE_VERSION"
 echo ""
 
 read -p "確認部署？(y/N): " CONFIRM
@@ -127,9 +123,10 @@ helm upgrade --install ko-runners \
   --set minRunners=${MIN_RUNNERS} \
   --set maxRunners=${MAX_RUNNERS} \
   --set runnerScaleSetName=ko \
+  --set containerMode.type=dind \
   --set template.spec.serviceAccountName=runner-sa \
   --set template.spec.containers[0].name=runner \
-  --set template.spec.containers[0].image="ghcr.io/shared-utils/github-runner-ko:${IMAGE_VERSION}" \
+  --set template.spec.containers[0].image="ghcr.io/shared-utils/github-runner-ko:latest" \
   --set template.spec.containers[0].imagePullPolicy=Always \
   oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
 
