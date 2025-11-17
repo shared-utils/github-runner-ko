@@ -123,11 +123,10 @@ helm upgrade --install ko-runners \
   --set minRunners=${MIN_RUNNERS} \
   --set maxRunners=${MAX_RUNNERS} \
   --set runnerScaleSetName=ko \
-  --set containerMode.type=dind \
   --set template.spec.serviceAccountName=runner-sa \
   --set template.spec.containers[0].name=runner \
-  --set template.spec.containers[0].image="ghcr.io/shared-utils/github-runner-ko:latest" \
-  --set template.spec.containers[0].imagePullPolicy=Always \
+  --set template.spec.containers[0].image="ghcr.io/shared-utils/github-runner-ko:0.0.2" \
+  --set template.spec.containers[0].imagePullPolicy=IfNotPresent \
   oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
 
 echo ""
